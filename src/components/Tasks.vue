@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Task } from '../api/taskApi'
+import type { Task } from '../types/types';
 
 const props = defineProps<{
   tasks: Task[]
