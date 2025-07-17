@@ -21,3 +21,13 @@ export async function createTask(newTask: Omit<Task, 'id'>): Promise<Task> {
   if (!response.ok) throw new Error('Failed to create task')
   return await response.json()
 }
+
+export async function updateTask(task: Task): Promise<Task> {
+  const response = await fetch(`${apiUrl}/${task.id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(task),
+  })
+  if (!response.ok) throw new Error('Failed to update task')
+  return await response.json()
+}

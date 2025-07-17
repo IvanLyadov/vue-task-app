@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import Tasks from './components/Tasks.vue'
 import TaskForm from './components/TaskForm.vue'
-import { fetchTasks, createTask } from './api/taskApi'
+import { fetchTasks, createTask, updateTask } from './api/taskApi'
 import type { Task } from './api/taskApi'
 
 const tasks = ref<Task[]>([])
@@ -24,6 +24,16 @@ async function handleAddTask(newTask: { name: string; is_completed: boolean }) {
     console.error(error)
   }
 }
+
+async function handleToggleTask(task: Task) {
+  try {
+    const updated = await updateTask(task)
+    const idx = tasks.value.findIndex(t => t.id === updated.id)
+    if (idx !== -1) tasks.value[idx] = updated
+  } catch (error) {
+    console.error(error)
+  }
+}
 </script>
 
 <template>
@@ -32,9 +42,10 @@ async function handleAddTask(newTask: { name: string; is_completed: boolean }) {
   </header>
 
   <main>
-    <Tasks :tasks="tasks" />
+    <Tasks :tasks="tasks" @toggle-task="handleToggleTask" />
   </main>
 </template>
+
 <style scoped>
 header {
   line-height: 1.5;

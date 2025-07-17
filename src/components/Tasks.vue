@@ -1,17 +1,32 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import type { Task } from '../api/taskApi'
 
-defineProps<{
+const props = defineProps<{
   tasks: Task[]
 }>()
+
+const emit = defineEmits<{
+  (e: 'toggle-task', task: Task): void
+}>()
+
+function onToggle(task: Task) {
+  emit('toggle-task', { ...task, is_completed: !task.is_completed })
+}
 </script>
+
 
 <template>
   <div>
     <h2>Tasks</h2>
     <ul>
-      <li v-for="task in tasks" :key="task.id">
-        <span :style="{ textDecoration: task.is_completed ? 'line-through' : 'none' }">
+      <li v-for="task in tasks.slice().reverse()" :key="task.id">
+        <input
+          type="checkbox"
+          :checked="task.is_completed"
+          @change="onToggle(task)"
+        />
+        <span :style="{ textDecoration: task.is_completed ? 'line-through' : 'none', marginLeft: '0.5rem' }">
           {{ task.name }}
         </span>
       </li>
