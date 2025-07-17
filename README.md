@@ -1,29 +1,58 @@
-# vue-task-app
+# Vue Task App
 
-This template should help get you started developing with Vue 3 in Vite.
+A simple and modern task management application built with Vue 3 and TypeScript.  
+You can add, complete, and delete tasks with a clean UI and persistent backend.
 
-## Recommended IDE Setup
+## Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- Add new tasks
+- Mark tasks as completed (with checkbox)
+- Delete tasks (with confirmation)
+- Tasks are fetched from and synced with a backend API
+- Responsive and centered layout
 
-## Customize configuration
+## Preview
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+![App Preview](./preview.png)
 
 ## Project Setup
 
-```sh
+```bash
+# Install dependencies
 npm install
-```
 
-### Compile and Hot-Reload for Development
-
-```sh
+# Run the development server
 npm run dev
-```
 
-### Compile and Minify for Production
-
-```sh
+# Build for production
 npm run build
 ```
+
+## API
+
+This app expects a backend API with the following endpoints:
+
+- `GET /api/tasks` — fetch all tasks
+- `POST /api/tasks` — create a new task (`{ name, is_completed }`)
+- `PUT /api/tasks/:id` — update a task
+- `DELETE /api/tasks/:id` — delete a task
+
+## Folder Structure
+
+```
+src/
+  components/
+    TaskForm.vue
+    Tasks.vue
+  api/
+    taskApi.ts
+  assets/
+    main.css
+  App.vue
+  main.ts
+preview.png
+```
+
+## License
+
+MIT

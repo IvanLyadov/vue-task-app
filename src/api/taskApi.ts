@@ -1,9 +1,4 @@
-export interface Task {
-  id: number
-  name: string
-  is_completed: boolean
-}
-
+import type { Task } from '../types/types'
 const apiUrl = 'http://localhost:8000/api/tasks';
 
 export async function fetchTasks(): Promise<Task[]> {
