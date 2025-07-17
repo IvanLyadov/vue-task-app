@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import type { Task } from '../api/taskApi'
 
 const props = defineProps<{
@@ -8,13 +7,19 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'toggle-task', task: Task): void
+  (e: 'delete-task', id: number): void
 }>()
 
 function onToggle(task: Task) {
   emit('toggle-task', { ...task, is_completed: !task.is_completed })
 }
-</script>
 
+function onDelete(id: number) {
+  if (confirm('Are you sure you want to delete this task?')) {
+    emit('delete-task', id)
+  }
+}
+</script>
 
 <template>
   <div>
@@ -26,9 +31,12 @@ function onToggle(task: Task) {
           :checked="task.is_completed"
           @change="onToggle(task)"
         />
-        <span :style="{ textDecoration: task.is_completed ? 'line-through' : 'none', marginLeft: '0.5rem' }">
+        <span :style="{ textDecoration: task.is_completed ? 'line-through' : 'none', marginLeft: '0.5rem', flex: 1 }">
           {{ task.name }}
         </span>
+        <button @click="onDelete(task.id)" style="margin-left: auto; background: #ff4d4f; color: #fff; border: none; border-radius: 4px; padding: 0.3rem 0.7rem; cursor: pointer;">
+          Delete
+        </button>
       </li>
     </ul>
   </div>

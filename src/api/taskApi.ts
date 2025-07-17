@@ -31,3 +31,10 @@ export async function updateTask(task: Task): Promise<Task> {
   if (!response.ok) throw new Error('Failed to update task')
   return await response.json()
 }
+
+export async function deleteTask(id: number): Promise<void> {
+  const response = await fetch(`${apiUrl}/${id}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok) throw new Error('Failed to delete task')
+}

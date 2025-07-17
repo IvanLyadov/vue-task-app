@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import Tasks from './components/Tasks.vue'
 import TaskForm from './components/TaskForm.vue'
-import { fetchTasks, createTask, updateTask } from './api/taskApi'
+import { fetchTasks, createTask, updateTask, deleteTask } from './api/taskApi'
 import type { Task } from './api/taskApi'
 
 const tasks = ref<Task[]>([])
@@ -34,6 +34,15 @@ async function handleToggleTask(task: Task) {
     console.error(error)
   }
 }
+
+async function handleDeleteTask(id: number) {
+  try {
+    await deleteTask(id)
+    tasks.value = tasks.value.filter(task => task.id !== id)
+  } catch (error) {
+    console.error(error)
+  }
+}
 </script>
 
 <template>
@@ -42,7 +51,11 @@ async function handleToggleTask(task: Task) {
   </header>
 
   <main>
-    <Tasks :tasks="tasks" @toggle-task="handleToggleTask" />
+    <Tasks
+      :tasks="tasks"
+      @toggle-task="handleToggleTask"
+      @delete-task="handleDeleteTask"
+    />
   </main>
 </template>
 
