@@ -1,19 +1,27 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { ref, onMounted } from 'vue'
+import Tasks from './components/Tasks.vue'
+import { fetchTasks } from './api/taskApi'
+
+const tasks = ref([])
+
+onMounted(async () => {
+  try {
+    tasks.value = await fetchTasks()
+  } catch (error) {
+    console.error(error)
+    tasks.value = []
+  }
+})
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
+    <!-- You can add header content here -->
   </header>
 
   <main>
-    <TheWelcome />
+    <Tasks :tasks="tasks" />
   </main>
 </template>
 
