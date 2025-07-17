@@ -1,9 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import Tasks from './components/Tasks.vue'
-import { fetchTasks } from './api/taskApi'
+import TaskForm from './components/TaskForm.vue'
+import { fetchTasks, createTask } from './api/taskApi'
+import type { Task } from './api/taskApi'
 
-const tasks = ref([])
+const tasks = ref<Task[]>([])
 
 onMounted(async () => {
   try {
@@ -13,18 +15,26 @@ onMounted(async () => {
     tasks.value = []
   }
 })
+
+async function handleAddTask(newTask: { name: string; is_completed: boolean }) {
+  try {
+    const created = await createTask(newTask)
+    tasks.value.push(created)
+  } catch (error) {
+    console.error(error)
+  }
+}
 </script>
 
 <template>
   <header>
-    <!-- You can add header content here -->
+    <TaskForm @add-task="handleAddTask" />
   </header>
 
   <main>
     <Tasks :tasks="tasks" />
   </main>
 </template>
-
 <style scoped>
 header {
   line-height: 1.5;
