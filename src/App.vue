@@ -1,19 +1,61 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import Tasks from './components/Tasks.vue'
+import TaskForm from './components/TaskForm.vue'
+import { fetchTasks, createTask, updateTask, deleteTask } from './api/taskApi'
+import type { Task } from './api/taskApi'
+
+const tasks = ref<Task[]>([])
+
+onMounted(async () => {
+  try {
+    tasks.value = await fetchTasks()
+  } catch (error) {
+    console.error(error)
+    tasks.value = []
+  }
+})
+
+async function handleAddTask(newTask: { name: string; is_completed: boolean }) {
+  try {
+    const created = await createTask(newTask)
+    tasks.value.push(created)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+async function handleToggleTask(task: Task) {
+  try {
+    const updated = await updateTask(task)
+    const idx = tasks.value.findIndex(t => t.id === updated.id)
+    if (idx !== -1) tasks.value[idx] = updated
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+async function handleDeleteTask(id: number) {
+  try {
+    await deleteTask(id)
+    tasks.value = tasks.value.filter(task => task.id !== id)
+  } catch (error) {
+    console.error(error)
+  }
+}
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
+    <TaskForm @add-task="handleAddTask" />
   </header>
 
   <main>
-    <TheWelcome />
+    <Tasks
+      :tasks="tasks"
+      @toggle-task="handleToggleTask"
+      @delete-task="handleDeleteTask"
+    />
   </main>
 </template>
 
