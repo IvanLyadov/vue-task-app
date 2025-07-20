@@ -1,22 +1,33 @@
 <script setup lang="ts">
 import type { Task } from '../types/types';
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { updateTask, deleteTask } from '../api/taskApi'
 
-const props = defineProps<{
+defineProps<{
   tasks: Task[]
 }>()
 
-const emit = defineEmits<{
-  (e: 'toggle-task', task: Task): void
-  (e: 'delete-task', id: number): void
-}>()
+const queryClient = useQueryClient()
+
+// Update task mutation
+const updateTaskMutation = useMutation({
+  mutationFn: updateTask,
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
+})
+
+// Delete task mutation
+const deleteTaskMutation = useMutation({
+  mutationFn: deleteTask,
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
+})
 
 function onToggle(task: Task) {
-  emit('toggle-task', { ...task, is_completed: !task.is_completed })
+  updateTaskMutation.mutate({ ...task, is_completed: !task.is_completed })
 }
 
 function onDelete(id: number) {
   if (confirm('Are you sure you want to delete this task?')) {
-    emit('delete-task', id)
+    deleteTaskMutation.mutate(id)
   }
 }
 </script>
@@ -31,10 +42,10 @@ function onDelete(id: number) {
           :checked="task.is_completed"
           @change="onToggle(task)"
         />
-        <span :style="{ textDecoration: task.is_completed ? 'line-through' : 'none', marginLeft: '0.5rem', flex: 1 }">
+        <span :style="{ textDecoration: task.is_completed ? 'line-through' : 'none' }" class="task-name">
           {{ task.name }}
         </span>
-        <button @click="onDelete(task.id)" style="margin-left: auto; background: #ff4d4f; color: #fff; border: none; border-radius: 4px; padding: 0.3rem 0.7rem; cursor: pointer;">
+        <button @click="onDelete(task.id)" class="delete-button">
           Delete
         </button>
       </li>
@@ -43,6 +54,20 @@ function onDelete(id: number) {
 </template>
 
 <style scoped>
+.delete-button {
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.task-name {
+  flex: 1;
+  margin-left: 0.5rem;
+}
+
 ul {
   padding-left: 0;
   list-style: none;

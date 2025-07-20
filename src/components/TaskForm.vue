@@ -1,15 +1,24 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-
-const emit = defineEmits<{
-  (e: 'add-task', task: { name: string; is_completed: boolean }): void
-}>()
+import { createTask } from '../api/taskApi'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 
 const name = ref('')
+const queryClient = useQueryClient()
+
+// Add task mutation
+const addTaskMutation = useMutation({
+  mutationFn: createTask,
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
+})
+
+function handleAddTask(newTask: { name: string; is_completed: boolean }) {
+  addTaskMutation.mutate(newTask)
+}
 
 function submitForm() {
   if (!name.value.trim()) return
-  emit('add-task', { name: name.value, is_completed: false })
+  handleAddTask({ name: name.value, is_completed: false })
   name.value = ''
 }
 </script>
